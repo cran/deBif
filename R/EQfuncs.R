@@ -42,26 +42,30 @@ initEQ <- function(state, parms, curveData, nopts, session = NULL) {
     # scaling vector, drop that row of the matrix which yields the least
     # singular restricted matrix, such that eigenvaues can be determined easily
     # Estimate the condition numbers
-    condnrs <- unlist(lapply((1:nrow(JT)),
-                             function(i){
-                               incrows <- rep(TRUE, nrow(JT))
-                               incrows[i] <- FALSE
-                               jacc <- JT[incrows,]
-                               if (abs(det(jacc)) > 1.0E-5) return(rcond(jacc))
-                               else return(0.0)
-                             }))
-    maxind <- which.max(condnrs)
-    incrows <- rep(TRUE, nrow(JT))
-    incrows[maxind] <- FALSE
+    if (nrow(JT) == 1) {
+      phi <- 1.0
+    } else {
+      condnrs <- unlist(lapply((1:nrow(JT)),
+                               function(i){
+                                 incrows <- rep(TRUE, nrow(JT))
+                                 incrows[i] <- FALSE
+                                 jacc <- JT[incrows,]
+                                 if (abs(det(jacc)) > 1.0E-5) return(rcond(jacc))
+                                 else return(0.0)
+                               }))
+      maxind <- which.max(condnrs)
+      incrows <- rep(TRUE, nrow(JT))
+      incrows[maxind] <- FALSE
 
-    # For the restricted matrix solve for the eigenvalues and select the
-    # eigenvector belonging to the eigenvalue closest to 0
-    eig <- eigen(JT[incrows,])
-    # minindx <- which.min(abs(Re(eig$values)))
-    # phi <- c(eig$vectors[,minindx])
-    allindx <- (1:length(eig$values))[Im(eig$values) == 0]
-    minindx <- allindx[which.min(abs(Re(eig$values[Im(eig$values) == 0])))]
-    phi <- Re(c(eig$vectors[,minindx]))
+      # For the restricted matrix solve for the eigenvalues and select the
+      # eigenvector belonging to the eigenvalue closest to 0
+      eig <- eigen(JT[incrows,])
+      # minindx <- which.min(abs(Re(eig$values)))
+      # phi <- c(eig$vectors[,minindx])
+      allindx <- (1:length(eig$values))[Im(eig$values) == 0]
+      minindx <- allindx[which.min(abs(Re(eig$values[Im(eig$values) == 0])))]
+      phi <- Re(c(eig$vectors[,minindx]))
+    }
 
     # Now compute B(q1,q2) and B(q2, q2) as explained. The function B(x,y) is
     # defined in eq. (10.56) on pg. 496 of Kuznetsov (1996). The vectors

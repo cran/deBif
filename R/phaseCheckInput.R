@@ -71,7 +71,9 @@ phaseCheckInputCurves <- function(oldcurves, inlist, snames, pnames) {
       for (i in (1:length(nlist))) {
         if (all(c("label", "type", "initstate", "parameters", "points", "special.points", "special.tags") %in% names(nlist[[i]]))
             && (ncol(nlist[[i]]$points) == (length(snames)+1))
-            && all(colnames(nlist[[i]]$points) == c("Time", snames))) {
+            && all(colnames(nlist[[i]]$points) == c("Time", snames))
+            && (length(names(nlist[[i]]$parameters)) == length(pnames))
+            && all(names(nlist[[i]]$parameters) == pnames)) {
           clist$Orbits[[length((clist$Orbits))+1]] <- nlist[[i]]
           clist$TotalCurves <- clist$TotalCurves + 1
         }

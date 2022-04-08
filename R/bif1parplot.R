@@ -35,7 +35,7 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
       aT.x <- pretty(alims)
     }
     aT.xval <- converty2y(aT.x, 0, 1, 0, popts$xmin, popts$xmax, popts$logx)
-    aT.xlab <- as.character(pretty(aT.x))
+    aT.xlab <- as.character(aT.x)
     # Axis
     lines(trans3d(c(0:1), 0, 0, pmat) , col="black")
     tick.start <- trans3d(aT.xval, 0, 0, pmat)
@@ -66,7 +66,7 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
       aT.z <- pretty(alims)
     }
     aT.zval <- converty2y(aT.z, 0, 1, 0, popts$ymin, popts$ymax, popts$logy)
-    aT.zlab <- as.character(pretty(aT.z))
+    aT.zlab <- as.character(aT.z)
     # Axis
     if (popts$theta < 0){
       lines(trans3d(0, 1, c(0:1), pmat) , col="black")
@@ -115,7 +115,7 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
       aT.y <- pretty(alims)
     }
     aT.yval <- converty2y(aT.y, 0, 1, 0, popts$y2min, popts$y2max, popts$logy2)
-    aT.ylab <- as.character(pretty(aT.y))
+    aT.ylab <- as.character(aT.y)
     if (popts$theta < 0) {
       # Axis
       lines(trans3d(0, c(0:1), 0, pmat) , col="black")

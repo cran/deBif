@@ -103,7 +103,9 @@ bifCheckInputCurves <- function(oldcurves, inlist, snames, pnames) {
       for (i in (1:length(nlist))) {
         if (all(c("label", "type", "initstate", "parameters", "points", "special.points", "special.tags") %in% names(nlist[[i]]))
             && (ncol(nlist[[i]]$points) == (length(snames)+1))
-            && all(colnames(nlist[[i]]$points) == c("Time", snames))) {
+            && all(colnames(nlist[[i]]$points) == c("Time", snames))
+            && (length(names(nlist[[i]]$parameters)) == length(pnames))
+            && all(names(nlist[[i]]$parameters) == pnames)) {
           clist$Orbits[[length((clist$Orbits))+1]] <- nlist[[i]]
           clist$TotalCurves <- clist$TotalCurves + 1
         }
@@ -117,7 +119,9 @@ bifCheckInputCurves <- function(oldcurves, inlist, snames, pnames) {
                     "tanvec", "special.points", "special.eigvals", "special.tanvec", "special.tags") %in% names(nlist[[i]]))
               && (ncol(nlist[[i]]$points) == (length(snames)+1))
               && ((colnames(nlist[[i]]$points))[1] %in% pnames)
-              && all(colnames(nlist[[i]]$points)[2:(length(snames)+1)] == snames)) {
+              && all(colnames(nlist[[i]]$points)[2:(length(snames)+1)] == snames)
+              && (length(names(nlist[[i]]$parameters)) == length(pnames))
+              && all(names(nlist[[i]]$parameters) == pnames)) {
             clist$BifurcationCurves[[length((clist$BifurcationCurves))+1]] <- nlist[[i]]
             clist$TotalCurves <- clist$TotalCurves + 1
           }
@@ -126,7 +130,9 @@ bifCheckInputCurves <- function(oldcurves, inlist, snames, pnames) {
           if (all(c("label", "type", "initstate", "parameters", "bifpars", "points",
                     "tanvec", "special.points", "special.tanvec", "special.tags") %in% names(nlist[[i]]))
               && ((colnames(nlist[[i]]$points))[1] %in% pnames)
-              && all(colnames(nlist[[i]]$points)[2:(length(snames)+1)] == snames)) {
+              && all(colnames(nlist[[i]]$points)[2:(length(snames)+1)] == snames)
+              && (length(names(nlist[[i]]$parameters)) == length(pnames))
+              && all(names(nlist[[i]]$parameters) == pnames)) {
             clist$BifurcationCurves[[length((clist$BifurcationCurves))+1]] <- nlist[[i]]
             clist$TotalCurves <- clist$TotalCurves + 1
           }
@@ -140,7 +146,9 @@ bifCheckInputCurves <- function(oldcurves, inlist, snames, pnames) {
                   "tanvec", "special.points", "special.eigvals", "special.tanvec", "special.tags") %in% names(nlist[[i]]))
             && (ncol(nlist[[i]]$points) == (length(snames)+2))
             && all((colnames(nlist[[i]]$points))[1:2] %in% pnames)
-            && all(colnames(nlist[[i]]$points)[3:(length(snames)+2)] == snames))
+            && all(colnames(nlist[[i]]$points)[3:(length(snames)+2)] == snames)
+            && (length(names(nlist[[i]]$parameters)) == length(pnames))
+            && all(names(nlist[[i]]$parameters) == pnames))
         {
           clist$BifurcationBounds[[length((clist$BifurcationBounds))+1]] <- nlist[[i]]
           clist$TotalCurves <- clist$TotalCurves + 1

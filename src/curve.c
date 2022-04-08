@@ -713,7 +713,7 @@ int Determinant(const int N, double *M, double *det, double *cond)
     {
       norm      = anorm(N, N, M);
       whichnorm = '1';
-      dgecon(&whichnorm, &nc, A, &nc, &norm, cond, work, iwork, &info);
+      dgecon(&whichnorm, &nc, A, &nc, &norm, cond, work, iwork, &info FCONE);
       if (info < 0)
         {
           sprintf(errstr, "Illegal value for parameter %d in dgecon()", abs((int)info));
@@ -781,7 +781,7 @@ int SolveLinearSystem(const int N, double *A, double *B)
   memcpy(Ac, A, (N * N) * sizeof(double));
   memcpy(Bc, B, N * sizeof(double));
 
-  dgesvx(&fact, &trans, &nc, &nrhs, Ac, &nc, Af, &nc, ipiv, &equed, r, c, Bc, &nc, x, &nc, &rcond, &ferr, &berr, work, iwork, &info);
+  dgesvx(&fact, &trans, &nc, &nrhs, Ac, &nc, Af, &nc, ipiv, &equed, r, c, Bc, &nc, x, &nc, &rcond, &ferr, &berr, work, iwork, &info FCONE FCONE FCONE);
 
   // Check for singularity of the matrix
   if (info < 0)

@@ -22,7 +22,7 @@
     You should have received a copy of the GNU General Public License
     along with this software. If not, see <http://www.gnu.org/licenses/>.
 
-    Last modification: AMdR - Mar 08, 2021
+    Last modification: AMdR - Apr 08, 2022
 ***/
 #ifndef GLOBALS
 #define GLOBALS
@@ -82,6 +82,8 @@
 #endif
 
 #define R_USE_C99_IN_CXX
+// See https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Fortran-character-strings
+#define USE_FC_LEN_T
 #include "R.h"
 #include <Rdefines.h>
 #include <Rinternals.h>
@@ -157,6 +159,10 @@ int                               SolveLinearSystem(const int N, double *A, doub
 
 #include "R_ext/BLAS.h"
 #include "R_ext/Lapack.h"
+// See https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Fortran-character-strings
+#ifndef FCONE
+#define FCONE
+#endif
 
 // Lapack index type
 
@@ -173,9 +179,9 @@ int                               SolveLinearSystem(const int N, double *A, doub
  *        TangentVec()  - Determine matrix determinant for BP detection
  */
 
-#define dgetrf                    dgetrf_                                           // Used in: Determinant()
-#define dgecon                    dgecon_                                           // Used in: Determinant()
-#define dgesvx                    dgesvx_                                           // Used in: SolveLinearSystem()
+#define dgetrf                    F77_CALL(dgetrf)        // Used in: Determinant()
+#define dgecon                    F77_CALL(dgecon)        // Used in: Determinant()
+#define dgesvx                    F77_CALL(dgesvx)        // Used in: SolveLinearSystem()
 
 
 /*==================================================================================================================================*/
