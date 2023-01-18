@@ -10,7 +10,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
       title = tagList(
         span(class = "logo-lg", "Bifurcation analysis"),
         icon("compass"), tags$style(".fa-compass {color:#E87722}")),
-      leftUi = tagList(span(class = "help-button", icon("question-circle"),
+      leftUi = tagList(span(class = "help-button", icon("question-circle", verify_fa = FALSE),
                             tags$style(".fa-question-circle {font-size: 24px; color:#66CC66; left: 235px; top: 13px; position: fixed;}")),
                        tags$li(class = "dropdown", actionButton("showODEs", "Show ODEs", class = "show-odes"),
                                tags$style(".show-odes {font-size: 13px;
@@ -19,7 +19,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
                                       text-indent: -8px;
                                       left: 270px; top: 11px; position: fixed;}"))),
       titleWidth = 220,
-      controlbarIcon = shiny::icon("cogs")
+      controlbarIcon = shiny::icon("cogs", verify_fa = FALSE)
     ),
     ########## Left side-bar
     sidebar = shinydashboardPlus::dashboardSidebar(
@@ -32,10 +32,10 @@ bifUI <- function(state, parms, plotopts, numopts) {
       tags$style(type='text/css', "#computebwrd3 { font-size: 13px;}"),
       tags$head(
         tags$style(HTML("
-     .selectize-dropdown-content .active {
-       background: #2196f3 !important;
-       color: white !important;
-     }
+          .selectize-dropdown-content .active {
+            background: #2196f3 !important;
+            color: white !important;
+          }
   "))
       ),
       # conditionPanels inside sidebarMenu do not really work well, so the entire sidebarMenu should be wrapped inside a conditionaPanel
@@ -239,9 +239,9 @@ bifUI <- function(state, parms, plotopts, numopts) {
         div(style="line-height: 18px !important", br()),
         conditionalPanel(
           condition = "input.plottab == 2 | input.plottab == 3",
-          shinyjs::hidden(actionButton("pausebtn", "Pause", icon("pause-circle"), style = "color: white;
+          shinyjs::hidden(actionButton("pausebtn", "Pause", icon("pause-circle", verify_fa = FALSE), style = "color: white;
                        background-color: green;
-                       font-size: 18px;
+                       font-size: 16px;
                        position: relative;
                        left: 18px;
                        height: 45px;
@@ -251,9 +251,9 @@ bifUI <- function(state, parms, plotopts, numopts) {
                        border-radius: 6px;
                        border-width: 2px")),
           div(style="line-height: 8px !important", br()),
-          shinyjs::hidden(actionButton("stopbtn", "Stop", icon("stop-circle"), style = "color: white;
+          shinyjs::hidden(actionButton("stopbtn", "Stop", icon("stop-circle", verify_fa = FALSE), style = "color: white;
                        background-color: red;
-                       font-size: 18px;
+                       font-size: 16px;
                        position: relative;
                        left: 18px;
                        height: 45px;
@@ -321,7 +321,8 @@ bifUI <- function(state, parms, plotopts, numopts) {
         id = "controlbartabs",
         controlbarItem(
           NULL,
-          h3("Plot options"),
+          div(style="font-size: 20px; line-height: 22px; margin-top: 0px; margin-bottom: 5px;",
+              ("Plot options")),
           selectInput('xcol', 'Variable(s) on X-axis',
                       c("Time" = 1, setNames((2:(length(state)+1)), names(state))), selected=plotopts[[1]]$xcol),
           splitLayout(cellWidths = c("50%", "50%"),
@@ -357,7 +358,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
             )
           ),
           div(style="line-height: 12px !important", br()),
-          actionButton("plotoptsapply", "Apply", icon("sync")),
+          actionButton("plotoptsapply", "Apply", icon("sync", verify_fa = FALSE)),
           tags$head(
             tags$style(
               HTML(
@@ -370,7 +371,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
               margin-top: 0 !important;
               margin-bottom: 2px !important;
               }
-              label {font-size: 14px;}
+              label {font-size: 13px;}
               #xmin{height: 30px}
               #xmax{height: 30px}
               #ymin{height: 30px}
@@ -382,7 +383,8 @@ bifUI <- function(state, parms, plotopts, numopts) {
           icon = shiny::icon("chart-line")),
         controlbarItem(
           NULL,
-          h3("Numerical options"),
+          div(style="font-size: 20px; line-height: 22px; margin-top: 0px; margin-bottom: 5px;",
+              ("Numerical options")),
           conditionalPanel(
             condition = "input.plottab == 1",
             h4("Time integration"),
@@ -394,7 +396,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
           conditionalPanel(
             condition = "input.plottab > 1",
             h4("Curve continuation"),
-            div(style="font-size: 18px; line-height: 0px; margin-top: 20px; margin-bottom: 12px; !important", ("Tolerances")),
+            div(style="font-size: 16px; line-height: 0px; margin-top: 20px; margin-bottom: 12px; !important", ("Tolerances")),
             splitLayout(cellWidths = c("45%", "55%"),
                         textInput(inputId="rhstol", label="Function", value=sprintf("%.1E", numopts$rhstol)),
                         textInput(inputId="dytol", label="Variable", value=sprintf("%.1E", numopts$dytol))),
@@ -402,23 +404,24 @@ bifUI <- function(state, parms, plotopts, numopts) {
                         textInput(inputId="iszero", label="Zero identity", value=sprintf("%.1E", numopts$iszero)),
                         textInput(inputId="neartol", label="Neighbourhood", value=sprintf("%.1E", numopts$neartol))),
             textInput(inputId="jacdif", label="Jacobian perturbation", value=sprintf("%.1E", numopts$jacdif)),
-            div(style="font-size: 18px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Step size")),
-            splitLayout(cellWidths = c("50%", "50%"),
-                        numericInput(inputId="minstepsize", label="Minimum", value=sprintf("%.1E", numopts$minstepsize)),
-                        numericInput(inputId="maxstepsize", label="Maximum", value=sprintf("%.1E", numopts$maxstepsize))),
-            div(style="font-size: 18px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Iterations")),
+            div(style="font-size: 16px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Step size")),
+            splitLayout(cellWidths = c("33%", "33%", "34%"),
+                        textInput(inputId="initstepsize", label="Initial", value=sprintf("%.1E", numopts$initstepsize)),
+                        textInput(inputId="minstepsize", label="Minimum", value=sprintf("%.1E", numopts$minstepsize)),
+                        textInput(inputId="maxstepsize", label="Maximum", value=sprintf("%.1E", numopts$maxstepsize))),
+            div(style="font-size: 16px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Iterations")),
             numericInput(inputId="maxiter", label="Maximum iterations", value=numopts$maxiter),
             numericInput(inputId="maxpoints", label="Maximum number of points", value=numopts$maxpoints),
             numericInput(inputId="replotfreq", label="Points between plot updates", min=1, max=10000,
                          value=numopts$replotfreq, step=1),
-            div(style="font-size: 18px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Limit cycle continuation")),
+            div(style="font-size: 16px; line-height: 0px; margin-top: 24px; margin-bottom: 12px; !important", ("Limit cycle continuation")),
             splitLayout(cellWidths = c("45%", "55%"),
                         numericInput(inputId="ninterval", label="Intervals", value=numopts$ninterval, min = 1, max = 40, step = 1),
                         numericInput(inputId="glorder", label="Order", value=numopts$glorder), min = 2, max = 7, step = 1),
             textInput(inputId="lcampl", label="Initial amplitude", value=sprintf("%.1E", numopts$lcampl))
           ),
           div(style="line-height: 12px !important", br()),
-          actionButton("numoptsapply", "Apply", icon("sync")),
+          actionButton("numoptsapply", "Apply", icon("sync", verify_fa = FALSE)),
           tags$head(
             tags$style(
               HTML(
@@ -431,7 +434,12 @@ bifUI <- function(state, parms, plotopts, numopts) {
               margin-top: 0 !important;
               margin-bottom: 2px !important;
               }
-              label {font-size: 14px;}
+              .shiny-bound-input {
+              font-size: 12px !important;
+              padding-left: 5px !important;
+              padding-right: 2px !important;
+              }
+              label {font-size: 13px;}
               #tmax{height: 30px}
               #tstep{height: 30px}
               #rhstol{height: 30px}
@@ -439,6 +447,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
               #neartol{height: 30px}
               #iszero{height: 30px}
               #jacdif{height: 30px}
+              #initstepsize{height: 30px}
               #minstepsize{height: 30px}
               #maxstepsize{height: 30px}
               #maxiter{height: 30px}
@@ -449,7 +458,7 @@ bifUI <- function(state, parms, plotopts, numopts) {
               #lcampl{height: 30px}
               '))),
           value = "control-sidebar-numopttab-tab",
-          icon = shiny::icon("tachometer-alt")),
+          icon = shiny::icon("tachometer-alt", verify_fa = FALSE)),
         selected = "control-sidebar-plotopttab-tab"),
       id = "controlbar",
       skin = "dark"),

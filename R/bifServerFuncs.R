@@ -161,7 +161,7 @@ processNumOptionsApply <- function(session, input, curtab, nopts) {
     nopts$tstep <- abs(as.numeric(input[["tstep"]]))
     nopts$odemethod <- input[["method"]]
     if ("ssgrid" %in% names(input)) nopts$ssgrid <- min(max(input[["ssgrid"]], 1), 50)
-    if ("pgrid" %in% names(input)) nopts$pgrid <- min(max(input[["pgrid"]], 1), 10)
+    if ("pgrid" %in% names(input)) nopts$pgrid <- min(max(input[["pgrid"]], 3), 20)
   }
   else {
     nopts$rhstol <- max(text2numeric(nopts$rhstol, input[["rhstol"]]), 1.0E-10)
@@ -177,6 +177,8 @@ processNumOptionsApply <- function(session, input, curtab, nopts) {
 
     nopts$minstepsize <- max(as.numeric(input[["minstepsize"]]), 1.0E-10)
     nopts$maxstepsize <- max(as.numeric(input[["maxstepsize"]]), nopts$minstepsize)
+    nopts$initstepsize <- max(as.numeric(input[["initstepsize"]]), nopts$minstepsize)
+    nopts$initstepsize <- min(nopts$initstepsize, nopts$maxstepsize)
     nopts$maxiter <- max(as.numeric(input[["maxiter"]]), 1)
     nopts$maxpoints <- max(as.numeric(input[["maxpoints"]]), 1)
     nopts$replotfreq <- max(round(as.numeric(input[["replotfreq"]])), 1)

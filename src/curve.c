@@ -24,7 +24,7 @@
     You should have received a copy of the GNU General Public License
     along with deBif. If not, see <http://www.gnu.org/licenses/>.
 
-    Last modification: AMdR - Mar 08, 2021
+    Last modification: AMdR - Jan 18, 2023
 ***/
 #ifndef CURVE
 #define CURVE
@@ -269,7 +269,7 @@ int FindPoint(const int pntdim, const int freeparsdim, double *guess, double *ta
       retcode = SolveLinearSystem(pntdim, JacCopy, dy);
       if (retcode != SUCCES)
         {
-          sprintf(errstr, "Failed to solve linear system in FindPoint() on iteration %d", iter);
+          snprintf(errstr, MAX_STR_LEN, "Failed to solve linear system in FindPoint() on iteration %d", iter);
           ErrorMsg(errstr);
           break;
         }
@@ -687,7 +687,7 @@ int Determinant(const int N, double *M, double *det, double *cond)
   dgetrf(&nc, &nc, A, &nc, ipiv, &info);
   if (info < 0)
     {
-      sprintf(errstr, "Illegal value for parameter %d in dgetrf()", abs((int)info));
+      snprintf(errstr, MAX_STR_LEN, "Illegal value for parameter %d in dgetrf()", abs((int)info));
       ErrorMsg(errstr);
       return ILLEGAL_INPUT;
     }
@@ -716,7 +716,7 @@ int Determinant(const int N, double *M, double *det, double *cond)
       dgecon(&whichnorm, &nc, A, &nc, &norm, cond, work, iwork, &info FCONE);
       if (info < 0)
         {
-          sprintf(errstr, "Illegal value for parameter %d in dgecon()", abs((int)info));
+          snprintf(errstr, MAX_STR_LEN, "Illegal value for parameter %d in dgecon()", abs((int)info));
           ErrorMsg(errstr);
           return ILLEGAL_INPUT;
         }
@@ -786,14 +786,27 @@ int SolveLinearSystem(const int N, double *A, double *B)
   // Check for singularity of the matrix
   if (info < 0)
     {
-      sprintf(errstr, "Illegal value for parameter %d in dgesvx()", abs((int)info));
+      snprintf(errstr, MAX_STR_LEN, "Illegal value for parameter %d in dgesvx()", abs((int)info));
       ErrorMsg(errstr);
       retval = ILLEGAL_INPUT;
     }
   else if (info > 0)
     {
+      int             ii, jj;
       ErrorMsg("(Nearly) Singular matrix in SolveLinearSystem(), solving the linear system A*x = B:\n");
-      retval = SINGULARITY;
+      for (ii = 0; ii < N; ii++)
+        {
+          if ((2*ii == (N - 1)) || (2*ii == N))
+            REprintf(" A = |");
+          else
+            REprintf("     |");
+          for (jj = 0; jj < N; jj++) REprintf("%16.8E", A[jj*N + ii]);
+          if ((2*ii == (N - 1)) || (2*ii == N))
+            REprintf("|,     B = | %16.8E|\n", B[ii]);
+          else
+            REprintf("|          | %16.8E|\n", B[ii]);
+        }
+    retval = SINGULARITY;
     }
   else
     {

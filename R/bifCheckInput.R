@@ -18,10 +18,22 @@ bifCheckNumSettings <- function(oldopts, inlist) {
       initnopts$iszero <- nlist$iszero
     if (("jacdif" %in% names(nlist)) && is.numeric(nlist$jacdif) && (nlist$jacdif > 0) && (nlist$jacdif < 1) )
       initnopts$jacdif <- nlist$jacdif
-    if (("minstepsize" %in% names(nlist)) && is.numeric(nlist$minstepsize) && (nlist$minstepsize > 0))
-      initnopts$minstepsize <- nlist$minstepsize
-    if (("maxstepsize" %in% names(nlist)) && is.numeric(nlist$maxstepsize) && (nlist$maxstepsize > initnopts$minstepsize))
-      initnopts$maxstepsize <- nlist$maxstepsize
+    if (("minstepsize" %in% names(nlist)) && is.numeric(nlist$minstepsize)) {
+      initnopts$minstepsize <- max(nlist$minstepsize, 1.0E-10)
+    }
+    if (("maxstepsize" %in% names(nlist)) && is.numeric(nlist$maxstepsize))
+      initnopts$maxstepsize <- max(nlist$maxstepsize, initnopts$minstepsize)
+    else
+      initnopts$maxstepsize <- max(initnopts$maxstepsize, initnopts$minstepsize)
+
+    if (("initstepsize" %in% names(nlist)) && is.numeric(nlist$initstepsize)) {
+      initnopts$initstepsize <- max(nlist$initstepsize, initnopts$minstepsize)
+      initnopts$initstepsize <- min(initnopts$initstepsize, initnopts$maxstepsize)
+    }
+    else {
+      initnopts$initstepsize <- max(initnopts$minstepsize, initnopts$maxstepsize / 10.0)
+    }
+
     if (("maxiter" %in% names(nlist)) && is.numeric(nlist$maxiter) && (nlist$maxiter > 0))
       initnopts$maxiter <- as.integer(nlist$maxiter)
     if (("maxpoints" %in% names(nlist)) && is.numeric(nlist$maxpoints) && (nlist$maxpoints > 0))

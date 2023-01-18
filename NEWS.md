@@ -1,3 +1,23 @@
+# deBif 0.1.7 (current, 1/18/2023)
+
+* Changed the use of the function sprintf() to snprintf() in the underlying C code as sprintf() has been deprecated in macOS 13
+
+* Corrected a bug (superfluous checking of the value of 'ycol' in case length(state) == 1) in phaseServerFuncs.R that prevented the preventing of all steady states
+
+* Corrected a missing value TRUE/FALSE error that occurred when phaseplane() was started for a 1-dimensional model for the very first time 
+
+* Corrected a bug in phasePlot2D.R that generated an error when selecting a variable with index > 2 in a model with more than 2 variables
+
+* Added an argument 'verify_fa = FALSE' to various calls to shiny::icon() in phaseUI.R and bifUI.R to prevent error messages from the FontAwesome package
+
+# deBif 0.1.6 (5/16/2022)
+
+* Introduced a new numerical option "Initial step size" to control the initial step along a solution curve
+
+* Changed the default grid dimension in the Portrait tab of phaseplane() to 8 and allowed this setting to be varied between 3 and 20
+
+* Reduced the font sizes in the menus of both phaseplane() and bifurcation()
+
 # deBif 0.1.5 (4/8/2022)
 
 * Changed the calls to the Lapack routines dgetrf, dgecon and dgesvx to correctly pass string from C to Fortran following ‘Writing R Extensions’ §6.6.1

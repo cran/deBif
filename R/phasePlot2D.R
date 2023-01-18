@@ -37,14 +37,14 @@ phasePlot2D <- function(curtab, odes, state, parms, plotopts, numopts, zlst = NU
   plot(NULL, type='n', xlim=c(xmin,xmax), ylim=c(ymin,ymax), xlab=xlab, ylab=ylab, log=logxy,
        cex.lab=as.numeric(plotopts["cex.lab"]), cex.axis=as.numeric(plotopts["cex.axis"]))
 
-  for (i in ishows)
+  for (i in (1:length(ishows)))
     {
       zc <- derivs[[i + 2]]                            # [[1]] = xc, [[2]] = yc, [[3]] = dxc, [[4]] = dyc
       goodrows <- !(rowSums(is.nan(zc)) == npixels)    # Ignore rows with only NaN
       goodcols <- !(colSums(is.nan(zc)) == npixels)    # Ignore columns with only NaN
       if (any(!is.nan(zc)))
         contour(derivs$xc[goodrows], derivs$yc[goodcols], zc[goodrows,goodcols],
-                levels=0, drawlabels=FALSE, add=TRUE, col=plotopts$colors[i], lwd=plotopts["lwd"])
+                levels=0, drawlabels=FALSE, add=TRUE, col=plotopts$colors[ishows[i]], lwd=plotopts["lwd"])
     }
 
   if ((curtab == 4) || (curtab == 6)) {
