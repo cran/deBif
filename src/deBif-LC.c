@@ -25,7 +25,7 @@
     You should have received a copy of the GNU General Public License
     along with deBif. If not, see <http://www.gnu.org/licenses/>.
 
-    Last modification: AMdR - Mar 02, 2022
+    Last modification: AMdR - Feb 21, 2023
 */
 
 #include "globals.h"
@@ -803,6 +803,8 @@ SEXP deBif(SEXP curveType, SEXP userFunc, SEXP initVals, SEXP fixedParVals, SEXP
       if (!dGlobalMem)
         {
           ErrorMsg("Memory allocation error in deBif()");
+          UNPROTECT(N_Protected);
+
           free(dBaseMem);
           dBaseMem = NULL;
           dGlobalMem = NULL;

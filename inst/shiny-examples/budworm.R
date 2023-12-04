@@ -26,7 +26,7 @@ model <- function(t, state, parms) {
     dN <- r*N*(1 - N/K) - E*P*N^2/(N0^2 + N^2)
 
     # The order of the derivatives in the returned list has to be
-    # identical to the order of the state variables contained in 
+    # identical to the order of the state variables contained in
     # the argument `state`
     return(list(c(dN)))
   })

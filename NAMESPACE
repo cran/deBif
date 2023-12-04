@@ -3,6 +3,7 @@
 export(bifurcation)
 export(deBifExample)
 export(deBifHelp)
+export(deBifReset)
 export(phaseplane)
 import(deSolve)
 import(rootSolve)

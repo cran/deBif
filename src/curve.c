@@ -24,7 +24,7 @@
     You should have received a copy of the GNU General Public License
     along with deBif. If not, see <http://www.gnu.org/licenses/>.
 
-    Last modification: AMdR - Jan 18, 2023
+    Last modification: AMdR - Dec 1, 2023
 ***/
 #ifndef CURVE
 #define CURVE
@@ -104,7 +104,7 @@ int ErrorMsg(const char *msg)
 #else
 
   REprintf("%s\n", msg);
-  warning(msg);
+  warning("%s", msg);
   R_FlushConsole();
   R_ProcessEvents();
 
@@ -793,7 +793,10 @@ int SolveLinearSystem(const int N, double *A, double *B)
   else if (info > 0)
     {
       int             ii, jj;
-      ErrorMsg("(Nearly) Singular matrix in SolveLinearSystem(), solving the linear system A*x = B:\n");
+
+      snprintf(errstr, MAX_STR_LEN, "\n(Nearly) Singular %dx%d matrix in SolveLinearSystem(), (zero component U(%d, %d) in A*x = B) \n", N, N, info, info);
+
+      REprintf("\n");
       for (ii = 0; ii < N; ii++)
         {
           if ((2*ii == (N - 1)) || (2*ii == N))
@@ -806,6 +809,10 @@ int SolveLinearSystem(const int N, double *A, double *B)
           else
             REprintf("|          | %16.8E|\n", B[ii]);
         }
+    R_FlushConsole();
+    R_ProcessEvents();
+
+    ErrorMsg(errstr);
     retval = SINGULARITY;
     }
   else

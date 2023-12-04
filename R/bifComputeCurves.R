@@ -319,6 +319,12 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
 
       if (curvetype == "LC") {
         cData$upoldp <- updateRefSol(0, y, cData$fixedpars, cData, nopts)
+
+        # Calculate the multipliers of the jacobian
+        eig <- multipliers(jac, cData, nopts)
+        # Sort them on decreasing modulus
+        eigval <- eig$values[order(Mod(eig$values), decreasing = TRUE)]
+        names(eigval) <- cData$eignames
       } else {
         # Compute the eigenvalues of the restricted Jacobian (exclude the first cData$freeparsdim columns
         # and takink only as many rows as there are state variables)
@@ -370,7 +376,11 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
                         BP = "Branching", HP = "Hopf bifurcation", LP = "Limit", BT = "Bogdanov-Takens", CP = "Cusp")
           msg <- paste0("Solution ", pntnr, ": ", msg, " point found:\n", dscp, "\n")
 
-          if (curvetype != "LC") {
+          if (curvetype == "LC") {
+            msg <- paste0(msg, "Multipiers:\n",
+                          paste(unlist(lapply(1:length(testvals$eigval),
+                                              function(i) {rcprintf("%12.5E", testvals$eigval[i])})), collapse=' '), "\n")
+          } else {
             msg <- paste0(msg, "Eigenvalues:\n",
                           paste(unlist(lapply(1:length(testvals$eigval),
                                               function(i) {rcprintf("%12.5E", testvals$eigval[i])})), collapse=' '), "\n")
@@ -398,7 +408,7 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
 
           testvals$y <- NULL
           testvals$tanvec <- NULL
-          if (curvetype != "LC") testvals$eigval <- NULL
+          testvals$eigval <- NULL
           testvals$biftype <- NULL
 
           pntnr <- pntnr + 1
@@ -425,6 +435,8 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
                             collapse = " "), " ",
                       sprintf("%12.5E", y[cData$pointdim]),
                       "\n")
+        msg <- paste0(msg, "Multipliers   :  ",
+                      paste(unlist(lapply(1:length(eigval), function(i) {rcprintf("%12.5E", eigval[i])})), collapse=' '), "\n")
       } else {
         msg <- paste0("Solution ", sprintf("%-5d", pntnr), ":  ",
                       paste(unlist(lapply(1:cData$pointdim,
@@ -479,7 +491,7 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
       ############## Store the results
       allsols <- rbind(allsols, (c(y)[1:cData$pointdim]))
       alltvs <- rbind(alltvs, (c(cData$tanvec)[1:cData$pointdim]))
-      if (curvetype != "LC") alleigs <- rbind(alleigs, c(eigval))
+      alleigs <- rbind(alleigs, c(eigval))
 
       ############## Determine the new step along the curve
       if ((corrections == 1) && (iternr < 4)) {
@@ -540,6 +552,34 @@ nextCurvePoints <- function(maxpoints, curveData, popts, nopts, session = NULL) 
             if ((as.numeric(y[popts$ylab]) < (as.numeric(popts$ymin) - bndtol)) ||
                 (as.numeric(y[popts$ylab]) > (as.numeric(popts$ymax) + bndtol))) {
               msg <- "Computation halted:\nMinimum or maximum of y-axis domain reached for 1st y-axis variable\n"
+              curvedone <- TRUE
+            }
+          } else if ((!curvedone ) && (curvetype == "LC")) {
+            minstatevals <- unlist(lapply((1:cData$statedim),
+                                          function(i) {min(y[cData$freeparsdim+i+cData$statedim*(1:(nopts$ninterval*nopts$glorder))])}))
+            maxstatevals <- unlist(lapply((1:cData$statedim),
+                                          function(i) {max(y[cData$freeparsdim+i+cData$statedim*(1:(nopts$ninterval*nopts$glorder))])}))
+            if (popts$ycol == 1) {
+              if (any(as.numeric(minstatevals) < (as.numeric(popts$ymin) - bndtol))) {
+                msg <- "Computation halted:\nMinimum of y-axis domain reached for one of the y-axis variables\n"
+                curvedone <- TRUE
+              }
+              if (any(as.numeric(maxstatevals) > (as.numeric(popts$ymax) + bndtol))) {
+                msg <- "Computation halted:\nMaximum of y-axis domain reached for one of the y-axis variables\n"
+                curvedone <- TRUE
+              }
+            } else {
+              if (as.numeric(minstatevals[popts$ycol - 1]) < (as.numeric(popts$ymin) - bndtol)) {
+                msg <- "Computation halted:\nMinimum of y-axis domain reached for 1st y-axis variable\n"
+                curvedone <- TRUE
+              }
+              if (as.numeric(maxstatevals[popts$ycol - 1]) > (as.numeric(popts$ymax) + bndtol)) {
+                msg <- "Computation halted:\nMaximum of y-axis domain reached for 1st y-axis variable\n"
+                curvedone <- TRUE
+              }
+            }
+            if (all((as.numeric(maxstatevals) - as.numeric(minstatevals)) < bndtol)) {
+              msg <- paste("Computation halted:\nCycle amplitude smaller than", bndtol, "\n")
               curvedone <- TRUE
             }
           }

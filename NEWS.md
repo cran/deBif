@@ -1,3 +1,15 @@
+# deBif 0.1.8 (current, 12/1/2023)
+
+* Corrected the checking whether variables had gone of scale during limit cycle continuation
+
+* Updated the DESCRIPTION file as some of the required packages (e.g. shiny) are no longer available for the earlier R versions
+
+* Built-in protection in bif1parplot.R against absence of "eigvals" from the curve list
+
+* Introduced a function deBifReset() to reload the package in case of computational problems
+
+* Implemented a routine that computes the multipliers of a limit cycle, relying on the built-in function solve() to solve for the inverse of a matrix and for the generalized eigenvalues. These multipliers are subsequently used to plot the limit cycle either with a solid line in case it is stable or with a dashed line when unstable
+
 # deBif 0.1.7 (current, 1/18/2023)
 
 * Changed the use of the function sprintf() to snprintf() in the underlying C code as sprintf() has been deprecated in macOS 13

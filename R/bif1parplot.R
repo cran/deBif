@@ -11,7 +11,7 @@ cliptrans3d <- function(x0, y0, z0, ...) {
   else return(NULL)
 }
 
-bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
+bif1parplot <- function(session = NULL, curvelist = NULL, popts, iszero = 1.0E-3) {
   # Save plot options to restore on exit
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
@@ -174,6 +174,13 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
           return(NA)
         }
         if (curvelist[[i]]$type == "LC") {
+          if ("eigvals" %in% names(curvelist[[i]])) {
+            # Multipliers are sorted on decreasing modulus
+            evmax <- Mod(curvelist[[i]]$eigvals)
+            unstable <- rowSums((evmax > (1.0 - as.numeric(iszero)))) > 1
+          } else {
+            unstable <- rep(FALSE, nrow(curvelist[[i]]$points))
+          }
           sdim <- length(curvelist[[i]]$initstate)
           mdim <- (length(curvelist[[i]]$points[1,]) - 2)/sdim
           mrange <- sdim*(0:(mdim-1))
@@ -183,7 +190,12 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
             z <- converty2y(c(curvelist[[i]]$points[j,popts$ycol + mrange]), 0, 1, 0, popts$ymin, popts$ymax, popts$logy)
             x <- rep(x, each=length(mrange))
             tr3d <- cliptrans3d(x, y, z, pmat)
-            if (!is.null(tr3d)) lines(tr3d, colvar = NULL, col=popts$colors[2], lwd=1)
+            if (!is.null(tr3d)) {
+              if (unstable[j])
+                lines(tr3d, colvar = NULL, col=popts$colors[2], lty=popts$unstablelty, lwd=0.25)
+              else
+                lines(tr3d, colvar = NULL, col=popts$colors[2], lwd=0.25)
+            }
           }
         } else {
           evmax <- Re(curvelist[[i]]$eigvals[,1])
@@ -251,21 +263,46 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
             return(NA)
           }
           if (curvelist[[i]]$type == "LC") {
+            if ("eigvals" %in% names(curvelist[[i]])) {
+              # Multipliers are sorted on decreasing modulus
+              evmax <- Mod(curvelist[[i]]$eigvals)
+              unstable <- rowSums((evmax > (1.0 - as.numeric(iszero)))) > 1
+            } else {
+              unstable <- rep(FALSE, nrow(curvelist[[i]]$points))
+            }
             sdim <- length(curvelist[[i]]$initstate)
             mdim <- (length(curvelist[[i]]$points[1,]) - 2)/sdim
             mrange <- sdim*(0:(mdim-1))
             lapply(2:(sdim+1), function(j) {
-              x <- curvelist[[i]]$points[,1]
+              x0 <- curvelist[[i]]$points[,1]
               if (nrow(curvelist[[i]]$points) > 1)
-                y <- apply(curvelist[[i]]$points[, j+mrange], 1, min)
+                y0 <- apply(curvelist[[i]]$points[, j+mrange], 1, min)
               else
-                y <- min(curvelist[[i]]$points[, j+mrange])
+                y0 <- min(curvelist[[i]]$points[, j+mrange])
+              x <- x0
+              y <- y0
+              x[unstable] <- NA
+              y[unstable] <- NA
               lines(x, y, col=popts$colors[min(j-1, length(popts$colors))], lwd=popts$lwd)
+              x <- x0
+              y <- y0
+              x[!unstable] <- NA
+              y[!unstable] <- NA
+              lines(x, y, lty=popts$unstablelty, col=popts$colors[min(j-1, length(popts$colors))], lwd=popts$lwd)
               if (nrow(curvelist[[i]]$points) > 1)
-                y <- apply(curvelist[[i]]$points[, j+mrange], 1, max)
+                y0 <- apply(curvelist[[i]]$points[, j+mrange], 1, max)
               else
-                y <- max(curvelist[[i]]$points[, j+mrange])
+                y0 <- max(curvelist[[i]]$points[, j+mrange])
+              x <- x0
+              y <- y0
+              x[unstable] <- NA
+              y[unstable] <- NA
               lines(x, y, col=popts$colors[min(j-1, length(popts$colors))], lwd=popts$lwd)
+              x <- x0
+              y <- y0
+              x[!unstable] <- NA
+              y[!unstable] <- NA
+              lines(x, y, lty=popts$unstablelty, col=popts$colors[min(j-1, length(popts$colors))], lwd=popts$lwd)
             })
           } else {
             lapply(2:ncol(curvelist[[i]]$points), function(j) {
@@ -309,20 +346,45 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
             return(NA)
           }
           if (curvelist[[i]]$type == "LC") {
+            if ("eigvals" %in% names(curvelist[[i]])) {
+              # Multipliers are sorted on decreasing modulus
+              evmax <- Mod(curvelist[[i]]$eigvals)
+              unstable <- rowSums((evmax > (1.0 - as.numeric(iszero)))) > 1
+            } else {
+              unstable <- rep(FALSE, nrow(curvelist[[i]]$points))
+            }
             sdim <- length(curvelist[[i]]$initstate)
             mdim <- (length(curvelist[[i]]$points[1,]) - 2)/sdim
             mrange <- sdim*(0:(mdim-1))
-            x <- curvelist[[i]]$points[,1]
+            x0 <- curvelist[[i]]$points[,1]
             if (nrow(curvelist[[i]]$points) > 1)
-              y <- apply(curvelist[[i]]$points[, popts$ycol+mrange], 1, min)
+              y0 <- apply(curvelist[[i]]$points[, popts$ycol+mrange], 1, min)
             else
-              y <- min(curvelist[[i]]$points[, popts$ycol+mrange])
+              y0 <- min(curvelist[[i]]$points[, popts$ycol+mrange])
+            x <- x0
+            y <- y0
+            x[unstable] <- NA
+            y[unstable] <- NA
             lines(x, y, col=popts$colors[1], lwd=popts$lwd)
+            x <- x0
+            y <- y0
+            x[!unstable] <- NA
+            y[!unstable] <- NA
+            lines(x, y, lty=popts$unstablelty, col=popts$colors[1], lwd=popts$lwd)
             if (nrow(curvelist[[i]]$points) > 1)
-              y <- apply(curvelist[[i]]$points[, popts$ycol+mrange], 1, max)
+              y0 <- apply(curvelist[[i]]$points[, popts$ycol+mrange], 1, max)
             else
-              y <- max(curvelist[[i]]$points[, popts$ycol+mrange])
+              y0 <- max(curvelist[[i]]$points[, popts$ycol+mrange])
+            x <- x0
+            y <- y0
+            x[unstable] <- NA
+            y[unstable] <- NA
             lines(x, y, col=popts$colors[1], lwd=popts$lwd)
+            x <- x0
+            y <- y0
+            x[!unstable] <- NA
+            y[!unstable] <- NA
+            lines(x, y, lty=popts$unstablelty, col=popts$colors[1], lwd=popts$lwd)
           } else {
             evmax <- Re(curvelist[[i]]$eigvals[,1])
             sp <- (evmax < 0)
@@ -357,22 +419,47 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
               return(NA)
             }
             if (curvelist[[i]]$type == "LC") {
+              if ("eigvals" %in% names(curvelist[[i]])) {
+                # Multipliers are sorted on decreasing modulus
+                evmax <- Mod(curvelist[[i]]$eigvals)
+                unstable <- rowSums((evmax > (1.0 - as.numeric(iszero)))) > 1
+              } else {
+                unstable <- rep(FALSE, nrow(curvelist[[i]]$points))
+              }
               sdim <- length(curvelist[[i]]$initstate)
               mdim <- (length(curvelist[[i]]$points[1,]) - 2)/sdim
               mrange <- sdim*(0:(mdim-1))
-              x <- curvelist[[i]]$points[,1]
+              x0 <- curvelist[[i]]$points[,1]
               if (nrow(curvelist[[i]]$points) > 1)
-                y <- apply(curvelist[[i]]$points[, popts$y2col+mrange], 1, min)
+                y0 <- apply(curvelist[[i]]$points[, popts$y2col+mrange], 1, min)
               else
-                y <- min(curvelist[[i]]$points[, popts$y2col+mrange])
-              y <- converty2y(y, popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
+                y0 <- min(curvelist[[i]]$points[, popts$y2col+mrange])
+              y0 <- converty2y(y0, popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
+              x <- x0
+              y <- y0
+              x[unstable] <- NA
+              y[unstable] <- NA
               lines(x, y, col=popts$colors[2], lwd=popts$lwd)
+              x <- x0
+              y <- y0
+              x[!unstable] <- NA
+              y[!unstable] <- NA
+              lines(x, y, lty=popts$unstablelty, col=popts$colors[2], lwd=popts$lwd)
               if (nrow(curvelist[[i]]$points) > 1)
-                y <- apply(curvelist[[i]]$points[, popts$y2col+mrange], 1, max)
+                y0 <- apply(curvelist[[i]]$points[, popts$y2col+mrange], 1, max)
               else
-                y <- max(curvelist[[i]]$points[, popts$y2col+mrange])
-              y <- converty2y(y, popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
+                y0 <- max(curvelist[[i]]$points[, popts$y2col+mrange])
+              y0 <- converty2y(y0, popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
+              x <- x0
+              y <- y0
+              x[unstable] <- NA
+              y[unstable] <- NA
               lines(x, y, col=popts$colors[2], lwd=popts$lwd)
+              x <- x0
+              y <- y0
+              x[!unstable] <- NA
+              y[!unstable] <- NA
+              lines(x, y, lty=popts$unstablelty, col=popts$colors[2], lwd=popts$lwd)
             } else {
               evmax <- Re(curvelist[[i]]$eigvals[,1])
               sp <- (evmax < 0)
@@ -380,7 +467,7 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts) {
               y <- converty2y(curvelist[[i]]$points[,popts$y2col], popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
               x[!sp] <- NA
               y[!sp] <- NA
-              lines(x, y, col=popts$colors[2], lwd=popts$lwd)
+              lines(x, y, lty=popts$unstablelty, col=popts$colors[2], lwd=popts$lwd)
               x <- curvelist[[i]]$points[,1]
               y <- converty2y(curvelist[[i]]$points[,popts$y2col], popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
               x[sp] <- NA
