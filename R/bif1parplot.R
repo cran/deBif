@@ -7,7 +7,7 @@ cliptrans3d <- function(x0, y0, z0, ...) {
   zin <- ((z >= 0) & (z <= 1))
   allin <- xin & yin & zin
   if (any(allin))
-    return(trans3d(x[allin], y[allin], z[allin], ...))
+    return(list(xy = trans3d(x[allin], y[allin], z[allin], ...), incl = allin))
   else return(NULL)
 }
 
@@ -190,11 +190,11 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts, iszero = 1.0E-3
             z <- converty2y(c(curvelist[[i]]$points[j,popts$ycol + mrange]), 0, 1, 0, popts$ymin, popts$ymax, popts$logy)
             x <- rep(x, each=length(mrange))
             tr3d <- cliptrans3d(x, y, z, pmat)
-            if (!is.null(tr3d)) {
+            if (!is.null(tr3d$xy)) {
               if (unstable[j])
-                lines(tr3d, colvar = NULL, col=popts$colors[2], lty=popts$unstablelty, lwd=0.25)
+                lines(tr3d$xy, colvar = NULL, col=popts$colors[2], lty=popts$unstablelty, lwd=0.25)
               else
-                lines(tr3d, colvar = NULL, col=popts$colors[2], lwd=0.25)
+                lines(tr3d$xy, colvar = NULL, col=popts$colors[2], lwd=0.25)
             }
           }
         } else {
@@ -209,11 +209,11 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts, iszero = 1.0E-3
           runstart <- (c(1, (1 + runend)))[1:length(runend)]
           for (j in (1:length(runstart))) {
             tr3d <- cliptrans3d(x[runstart[j]:runend[j]], y[runstart[j]:runend[j]], z[runstart[j]:runend[j]], pmat)
-            if (!is.null(tr3d)) {
+            if (!is.null(tr3d$xy)) {
               if (runval[j])
-                lines(tr3d, colvar = NULL, col=popts$colors[1], lwd=popts$lwd)
+                lines(tr3d$xy, colvar = NULL, col=popts$colors[1], lwd=popts$lwd)
               else
-                lines(tr3d, colvar = NULL, col=popts$colors[1], lty=popts$unstablelty, lwd=popts$lwd)
+                lines(tr3d$xy, colvar = NULL, col=popts$colors[1], lty=popts$unstablelty, lwd=popts$lwd)
             }
           }
           if (!is.null(curvelist[[i]]$special.points)) {
@@ -224,9 +224,9 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts, iszero = 1.0E-3
               y <- converty2y(curvelist[[i]]$special.points[bps,popts$y2col], 0, 1, 0, popts$y2min, popts$y2max, popts$logy2)
               z <- converty2y(curvelist[[i]]$special.points[bps,popts$ycol], 0, 1, 0, popts$ymin, popts$ymax, popts$logy)
               tr3d <- cliptrans3d(x, y, z, pmat)
-              if (!is.null(tr3d)) {
-                points(tr3d, pch=popts$bifsym, cex=popts$cex.sym, lwd=2)
-                text(tr3d, labels=lbls[bps], pos = popts$biflblpos)
+              if (!is.null(tr3d$xy)) {
+                points(tr3d$xy, pch=popts$bifsym, cex=popts$cex.sym, lwd=2)
+                text(tr3d$xy, labels=(lbls[bps])[tr3d$incl], pos = popts$biflblpos)
               }
             }
           }
@@ -467,7 +467,7 @@ bif1parplot <- function(session = NULL, curvelist = NULL, popts, iszero = 1.0E-3
               y <- converty2y(curvelist[[i]]$points[,popts$y2col], popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
               x[!sp] <- NA
               y[!sp] <- NA
-              lines(x, y, lty=popts$unstablelty, col=popts$colors[2], lwd=popts$lwd)
+              lines(x, y, col=popts$colors[2], lwd=popts$lwd)
               x <- curvelist[[i]]$points[,1]
               y <- converty2y(curvelist[[i]]$points[,popts$y2col], popts$ymin, popts$ymax, popts$logy, popts$y2min, popts$y2max, popts$logy2)
               x[sp] <- NA

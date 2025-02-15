@@ -1,7 +1,7 @@
 Package: deBif
 Type: Package
 Title: Bifurcation Analysis of Ordinary Differential Equation Systems
-Version: 0.1.8
+Version: 0.1.9
 Authors@R: c(person("Andre M.", "de Roos", email = "A.M.deRoos@uva.nl", role = c("aut", "cre")))
 Description: Shiny application that performs bifurcation and phaseplane analysis of systems of ordinary 
     differential equations. The package allows for computation of equilibrium curves as a function of 
@@ -18,11 +18,11 @@ Imports: graphics, deSolve (>= 1.3), rootSolve (>= 1.8), rstudioapi (>=
         0.13), shiny (>= 1.7), shinyjs (>= 2.1), shinydashboard (>=
         0.7), shinydashboardPlus (>= 2.0)
 Suggests: knitr, R.rsp, rmarkdown
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: R.rsp
 Depends: R (>= 4.2)
-Packaged: 2023-12-04 16:52:40 UTC; andre
+Packaged: 2025-02-15 17:42:35 UTC; andre
 Author: Andre M. de Roos [aut, cre]
 Maintainer: Andre M. de Roos <A.M.deRoos@uva.nl>
 Repository: CRAN
-Date/Publication: 2023-12-04 17:20:06 UTC
+Date/Publication: 2025-02-15 18:00:02 UTC

@@ -1,12 +1,12 @@
-466ce361a5125739c918378944e80c52 *DESCRIPTION
+63837645c39483c5ef5d8e388ca7a90d *DESCRIPTION
 b1e61db91a9519d16d2cd37a7782fa81 *NAMESPACE
-558240c4165b5ce8ff40e6b0650f36d1 *NEWS.md
+bbd7a74cb8c6b2262592d18daf945e1f *NEWS.md
 33075356e2dc1b14d0d43a9d4ac61c93 *R/BPfuncs.R
 9accdb1139cd60e85a7a3cf3a46248ca *R/EQfuncs.R
 e12eda915f40dd3104f7011da981229b *R/HPfuncs.R
 7b3eb1fb35dbc9c9eaf695d1eccbf270 *R/LCfuncs.R
 8be08a823bf312cfb71c4ab76cc168d7 *R/LPfuncs.R
-ee2dd4257ddb709ff89b55a274c02700 *R/bif1parplot.R
+13c03cb0f2ee89939515807eb94cc0d8 *R/bif1parplot.R
 ce2076b1ed36d23ee80f03544e050407 *R/bif2parplot.R
 a2792760c575ddeaf9a44d82aa3ff6e1 *R/bifCheckInput.R
 c919cad630d0d7708e9a3a4e355a2492 *R/bifComputeCurves.R
@@ -25,7 +25,7 @@ b5e2fac1aaf2ce2c995404aeb907f6a4 *R/phasePlot1D.R
 4333a755f180b259b87aa795115375c1 *R/phaseUI.R
 57f42b097a1228f96dcfb52725048ac3 *R/phaseplane.R
 fed049ad98d3254a43e7b85ec15e87a0 *R/setup.R
-865d29367497056d86b94512d5b815d2 *build/vignette.rds
+fb3ffe52fa0fa08884982f46e08b43ac *build/vignette.rds
 8692480e06a9274158cf511f17b317a3 *inst/doc/deBif-manual.pdf
 57160969a9873c7789a3035d4aa2d0d0 *inst/doc/deBif-manual.pdf.asis
 83c035141ac132dddc383574081ec356 *inst/manual/deBif-manual.zip
